@@ -35,6 +35,7 @@ export default function HomePage() {
 
 function HeroSection() {
   const locale = useLocale();
+  const t = useTranslations("Home");
 
   return (
     <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden bg-grid">
@@ -62,7 +63,7 @@ function HeroSection() {
           <motion.div variants={item}>
             <span className="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/20 rounded-full px-5 py-1.5 text-sm text-orange-400 font-medium mb-8 backdrop-blur-sm">
               <Zap className="w-3.5 h-3.5 fill-orange-400" />
-              Tunisia&apos;s #1 Peer-to-Peer Car Rental
+              {t("heroBadge")}
             </span>
           </motion.div>
 
@@ -71,8 +72,8 @@ function HeroSection() {
             variants={item}
             className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tighter mb-6 leading-[0.9]"
           >
-            Rent a Car,{" "}
-            <span className="text-gradient text-glow">Your Way.</span>
+            {t("heroTitle1")}
+            <span className="text-gradient text-glow"> {t("heroTitle2")}</span>
           </motion.h1>
 
           {/* Subtitle */}
@@ -80,8 +81,7 @@ function HeroSection() {
             variants={item}
             className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
           >
-            Browse hundreds of cars from trusted local owners. Fast, affordable,
-            and flexible car rental across Tunisia.
+            {t("heroSubtitle")}
           </motion.p>
 
           {/* CTAs */}
@@ -91,23 +91,23 @@ function HeroSection() {
               className="group inline-flex items-center gap-2 bg-primary text-white font-bold px-8 py-4 rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-primary/25 hover:shadow-primary/50 hover:-translate-y-0.5 text-base glow-primary-sm"
             >
               <Car className="w-5 h-5" />
-              Browse Cars Now
+              {t("browseBtn")}
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
               href={`/${locale}/auth/register`}
               className="inline-flex items-center gap-2 bg-white/5 hover:bg-white/10 text-white font-bold px-8 py-4 rounded-2xl transition-all border border-white/10 hover:border-white/20 text-base backdrop-blur-sm"
             >
-              List Your Car
+              {t("listBtn")}
             </Link>
           </motion.div>
 
           {/* Trust badges */}
           <motion.div variants={item} className="mt-14 flex flex-wrap items-center justify-center gap-6 text-muted-foreground text-sm">
             {[
-              { icon: Shield, label: "Verified Owners" },
-              { icon: Star, label: "4.9 avg rating" },
-              { icon: Users, label: "2,000+ renters" },
+              { icon: Shield, label: t("trustVerified") },
+              { icon: Star, label: t("trustRating") },
+              { icon: Users, label: t("trustRenters") },
             ].map(({ icon: Icon, label }) => (
               <div key={label} className="flex items-center gap-2">
                 <Icon className="w-4 h-4 text-orange-400" />
@@ -125,11 +125,12 @@ function HeroSection() {
 }
 
 function StatsSection() {
+  const t = useTranslations("Home");
   const [stats, setStats] = useState([
-    { value: "-", label: "Listed Cars" },
-    { value: "-", label: "Happy Renters" },
-    { value: "-", label: "Cities" },
-    { value: "4.9★", label: "Avg Rating" },
+    { value: "-", label: t("statCars") },
+    { value: "-", label: t("statRenters") },
+    { value: "-", label: t("statCities") },
+    { value: "4.9★", label: t("statRating") },
   ]);
 
   useEffect(() => {
@@ -152,10 +153,10 @@ function StatsSection() {
         const uniqueCities = new Set(cities?.map(c => c.city?.toLowerCase())).size;
 
         setStats([
-          { value: carsCount ? `${carsCount}+` : "0", label: "Listed Cars" },
-          { value: uniqueRenters ? `${uniqueRenters}+` : "0", label: "Happy Renters" },
-          { value: uniqueCities ? `${uniqueCities}+` : "0", label: "Cities" },
-          { value: "4.9★", label: "Avg Rating" },
+          { value: carsCount ? `${carsCount}+` : "0", label: t("statCars") },
+          { value: uniqueRenters ? `${uniqueRenters}+` : "0", label: t("statRenters") },
+          { value: uniqueCities ? `${uniqueCities}+` : "0", label: t("statCities") },
+          { value: "4.9★", label: t("statRating") },
         ]);
       } catch (e) {
         console.error("Failed to fetch stats", e);
@@ -194,29 +195,30 @@ function StatsSection() {
 }
 
 function FeaturesSection() {
+  const t = useTranslations("Home");
   const features = [
     {
       icon: Car,
-      title: "Wide Selection",
-      description: "From economy to luxury, find the perfect car for any occasion across Tunisia.",
+      title: t("feat1Title"),
+      description: t("feat1Desc"),
       color: "from-orange-500/20 to-orange-600/5",
     },
     {
       icon: Shield,
-      title: "Safe & Secure",
-      description: "All owners are verified and every rental is covered by our protection policy.",
+      title: t("feat2Title"),
+      description: t("feat2Desc"),
       color: "from-blue-500/20 to-blue-600/5",
     },
     {
       icon: MapPin,
-      title: "Nationwide Coverage",
-      description: "Available in Tunis, Sfax, Sousse, and 25+ other cities.",
+      title: t("feat3Title"),
+      description: t("feat3Desc"),
       color: "from-green-500/20 to-green-600/5",
     },
     {
       icon: Zap,
-      title: "Instant Booking",
-      description: "Book in minutes and get confirmation immediately from the car owner.",
+      title: t("feat4Title"),
+      description: t("feat4Desc"),
       color: "from-purple-500/20 to-purple-600/5",
     },
   ];
@@ -231,12 +233,12 @@ function FeaturesSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <span className="text-xs font-bold uppercase tracking-widest text-orange-400 mb-4 block">Why Karhba</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-orange-400 mb-4 block">{t("whyLabel")}</span>
           <h2 className="text-3xl md:text-5xl font-extrabold mb-4 tracking-tighter">
-            Built for the way <span className="text-gradient">you move</span>
+            {t("featuresTitle1")} <span className="text-gradient">{t("featuresTitle2")}</span>
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto text-lg">
-            The smartest way to rent or list a car in Tunisia.
+            {t("featuresSubtitle")}
           </p>
         </motion.div>
 
@@ -271,6 +273,7 @@ function FeaturesSection() {
 
 function CtaSection() {
   const locale = useLocale();
+  const t = useTranslations("Home");
 
   return (
     <section className="py-24 px-4">
@@ -289,24 +292,24 @@ function CtaSection() {
 
           <div className="relative z-50 glass-card border-orange-500/20 rounded-3xl p-12 text-center pointer-events-auto">
             <h2 className="text-3xl md:text-4xl font-extrabold mb-4 tracking-tighter">
-              Ready to hit the road?
+              {t("ctaTitle")}
             </h2>
             <p className="text-muted-foreground mb-8 text-lg max-w-lg mx-auto">
-              Join thousands of Tunisians already using Karhba for smarter, easier car rental.
+              {t("ctaSubtitle")}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center relative z-50">
               <Link
                 href={`/${locale}/auth/register`}
                 className="inline-flex items-center justify-center gap-2 bg-primary text-white font-bold px-8 py-4 rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-primary/30 hover:-translate-y-0.5 cursor-pointer relative z-50"
               >
-                Get Started Free
+                {t("ctaStart")}
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 href={`/${locale}/cars`}
                 className="inline-flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-white font-bold px-8 py-4 rounded-2xl transition-all border border-white/10 cursor-pointer relative z-50"
               >
-                Browse Cars
+                {t("ctaBrowse")}
               </Link>
             </div>
           </div>

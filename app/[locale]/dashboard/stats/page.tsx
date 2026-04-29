@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, TrendingUp, Calendar, CheckCircle, XCircle } from "lucide-react";
 
 export default async function StatsPage({ params: { locale } }: { params: { locale: string } }) {
-  const t = await getTranslations("Common");
+  const t = await getTranslations("Stats");
   const supabase = createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
@@ -53,45 +53,45 @@ export default async function StatsPage({ params: { locale } }: { params: { loca
       <div className="mb-8">
         <Link href={`/${locale}/dashboard`} className="inline-flex items-center gap-2 text-muted-foreground hover:text-white transition-colors mb-4">
           <ArrowLeft className="w-4 h-4" />
-          Back to Dashboard
+          {t("backDash")}
         </Link>
         <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
           <TrendingUp className="w-8 h-8 text-primary" />
-          Business Statistics
+          {t("title")}
         </h1>
-        <p className="text-muted-foreground mt-2">Detailed overview of your rental business performance.</p>
+        <p className="text-muted-foreground mt-2">{t("subtitle")}</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
         <div className="glass-card rounded-2xl p-6 shadow-xl shadow-black/20 border-t-4 border-t-primary">
-          <p className="text-sm font-medium text-muted-foreground mb-1">Total Revenue</p>
-          <p className="text-3xl font-bold text-white">{totalRevenue} <span className="text-base text-muted-foreground">TND</span></p>
+          <p className="text-sm font-medium text-muted-foreground mb-1">{t("revenue")}</p>
+          <p className="text-3xl font-bold text-white">{totalRevenue} <span className="text-base text-muted-foreground">{t("tnd")}</span></p>
         </div>
         
         <div className="glass-card rounded-2xl p-6 shadow-xl shadow-black/20 border-t-4 border-t-blue-500">
-          <p className="text-sm font-medium text-muted-foreground mb-1">Total Days Rented</p>
-          <p className="text-3xl font-bold text-white">{totalDaysRented} <span className="text-base text-muted-foreground">days</span></p>
+          <p className="text-sm font-medium text-muted-foreground mb-1">{t("days")}</p>
+          <p className="text-3xl font-bold text-white">{totalDaysRented} <span className="text-base text-muted-foreground">{t("daysSuffix")}</span></p>
         </div>
 
         <div className="glass-card rounded-2xl p-6 shadow-xl shadow-black/20 border-t-4 border-t-purple-500">
-          <p className="text-sm font-medium text-muted-foreground mb-1">Avg. Price / Day</p>
-          <p className="text-3xl font-bold text-white">{averagePricePerDay} <span className="text-base text-muted-foreground">TND</span></p>
+          <p className="text-sm font-medium text-muted-foreground mb-1">{t("avgPrice")}</p>
+          <p className="text-3xl font-bold text-white">{averagePricePerDay} <span className="text-base text-muted-foreground">{t("tnd")}</span></p>
         </div>
 
         <div className="glass-card rounded-2xl p-6 shadow-xl shadow-black/20 border-t-4 border-t-green-500">
-          <p className="text-sm font-medium text-muted-foreground mb-1">Completed Trips</p>
+          <p className="text-sm font-medium text-muted-foreground mb-1">{t("trips")}</p>
           <p className="text-3xl font-bold text-white">{completedBookings.length}</p>
         </div>
       </div>
 
-      <h2 className="text-2xl font-bold text-white mb-6">Booking Status Breakdown</h2>
+      <h2 className="text-2xl font-bold text-white mb-6">{t("breakdown")}</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="glass-card rounded-2xl p-6 flex items-center gap-4">
           <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center text-green-500">
             <CheckCircle className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">Accepted / Completed</p>
+            <p className="text-sm text-muted-foreground">{t("accepted")}</p>
             <p className="text-2xl font-bold text-white">{completedBookings.length}</p>
           </div>
         </div>
@@ -101,7 +101,7 @@ export default async function StatsPage({ params: { locale } }: { params: { loca
             <Calendar className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">Pending Requests</p>
+            <p className="text-sm text-muted-foreground">{t("pending")}</p>
             <p className="text-2xl font-bold text-white">{pendingBookings.length}</p>
           </div>
         </div>
@@ -111,7 +111,7 @@ export default async function StatsPage({ params: { locale } }: { params: { loca
             <XCircle className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">Cancelled / Rejected</p>
+            <p className="text-sm text-muted-foreground">{t("cancelled")}</p>
             <p className="text-2xl font-bold text-white">{cancelledBookings.length}</p>
           </div>
         </div>

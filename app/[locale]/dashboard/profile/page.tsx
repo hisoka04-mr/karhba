@@ -6,7 +6,8 @@ import { PlusCircle, Car, Settings, User } from "lucide-react";
 import OwnerCars from "../OwnerCars";
 
 export default async function ProfileSettingsPage({ params: { locale } }: { params: { locale: string } }) {
-  const t = await getTranslations("Dashboard");
+  const tDash = await getTranslations("Dashboard");
+  const tProf = await getTranslations("Profile");
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -29,8 +30,8 @@ export default async function ProfileSettingsPage({ params: { locale } }: { para
             <User className="w-8 h-8" />
           </div>
           <div>
-            <h1 className="text-3xl font-black text-white tracking-tight uppercase">Profile <span className="text-primary">Settings</span></h1>
-            <p className="text-muted-foreground font-medium uppercase text-[10px] tracking-widest mt-1">Manage your fleet and account info</p>
+            <h1 className="text-3xl font-black text-white tracking-tight uppercase">{tProf("title")} <span className="text-primary">{tProf("settings")}</span></h1>
+            <p className="text-muted-foreground font-medium uppercase text-[10px] tracking-widest mt-1">{tProf("subtitle")}</p>
           </div>
         </div>
         <Link
@@ -38,7 +39,7 @@ export default async function ProfileSettingsPage({ params: { locale } }: { para
           className="px-8 py-4 text-sm font-black text-white bg-primary rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1 flex items-center gap-3 uppercase tracking-widest"
         >
           <PlusCircle className="w-5 h-5" />
-          {t("uploadCarBtn")}
+          {tDash("uploadCarBtn")}
         </Link>
       </div>
 
@@ -47,19 +48,19 @@ export default async function ProfileSettingsPage({ params: { locale } }: { para
         <div className="lg:col-span-1 space-y-6">
           <div className="glass-card rounded-[2rem] p-8 border border-white/5 space-y-6">
             <div className="space-y-1">
-              <p className="text-[10px] font-black text-white/40 uppercase tracking-widest">Full Name</p>
-              <p className="font-bold text-white">{user.user_metadata?.full_name || "Owner Name"}</p>
+              <p className="text-[10px] font-black text-white/40 uppercase tracking-widest">{tProf("fullName")}</p>
+              <p className="font-bold text-white">{user.user_metadata?.full_name || tProf("ownerName")}</p>
             </div>
             <div className="space-y-1">
-              <p className="text-[10px] font-black text-white/40 uppercase tracking-widest">Email Address</p>
+              <p className="text-[10px] font-black text-white/40 uppercase tracking-widest">{tProf("email")}</p>
               <p className="font-bold text-white truncate">{user.email}</p>
             </div>
             <div className="pt-6 border-t border-white/5">
               <div className="flex items-center gap-2 text-primary">
                 <Settings className="w-4 h-4" />
-                <span className="text-xs font-black uppercase tracking-widest">Account Type</span>
+                <span className="text-xs font-black uppercase tracking-widest">{tProf("accountType")}</span>
               </div>
-              <p className="text-sm font-bold text-white mt-1">Car Owner / Rental Business</p>
+              <p className="text-sm font-bold text-white mt-1">{tProf("accountDesc")}</p>
             </div>
           </div>
         </div>
@@ -71,16 +72,16 @@ export default async function ProfileSettingsPage({ params: { locale } }: { para
           {(!cars || cars.length === 0) && (
             <div className="glass-card rounded-[2.5rem] p-16 text-center border-2 border-dashed border-white/5">
               <Car className="w-16 h-16 text-white/10 mx-auto mb-6" />
-              <h3 className="text-xl font-bold text-white mb-3">No cars listed yet</h3>
+              <h3 className="text-xl font-bold text-white mb-3">{tDash("noCarsListed")}</h3>
               <p className="text-muted-foreground mb-8 max-w-sm mx-auto">
-                Ready to start earning? Upload your first car to kرهبa and reach thousands of renters.
+                {tProf("readyEarn")}
               </p>
               <Link
                 href={`/${locale}/dashboard/cars/new`}
                 className="inline-flex items-center gap-3 px-8 py-4 text-sm font-black text-white bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all uppercase tracking-widest"
               >
                 <PlusCircle className="w-5 h-5 text-primary" />
-                Add Your First Car
+                {tProf("addFirst")}
               </Link>
             </div>
           )}
