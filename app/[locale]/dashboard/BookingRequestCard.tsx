@@ -1,11 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { Check, X, Clock, Calendar, User, Car } from "lucide-react"
+import { Check, X, Clock, Calendar, User, Car, Target } from "lucide-react"
 import { updateBookingStatus } from "./actions"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 import { useTranslations, useLocale } from "next-intl"
+import Image from "next/image"
 
 interface BookingRequestCardProps {
   booking: any
@@ -37,6 +38,10 @@ export default function BookingRequestCard({ booking }: BookingRequestCardProps)
   const carData = Array.isArray(booking.cars) ? booking.cars[0] : booking.cars;
   const carName = `${carData?.brand || ""} ${carData?.model || ""}`.trim() || "Car";
   const renterName = booking.renter?.full_name || "User";
+  const avatarUrl = booking.renter?.avatar_url;
+  const experience = booking.renter?.driving_experience;
+  const purpose = booking.renter?.renting_purpose;
+
   const startDate = booking.start_date ? new Date(booking.start_date).toLocaleDateString(locale) : "—";
   const endDate = booking.end_date ? new Date(booking.end_date).toLocaleDateString(locale) : "—";
 
@@ -46,16 +51,34 @@ export default function BookingRequestCard({ booking }: BookingRequestCardProps)
         {/* Header: Renter Info */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-              <User className="w-6 h-6" />
-            </div>
+            {avatarUrl ? (
+              <div className="w-12 h-12 rounded-2xl relative overflow-hidden group-hover:scale-110 transition-transform">
+                <Image src={avatarUrl} alt={renterName} fill className="object-cover" />
+              </div>
+            ) : (
+              <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                <User className="w-6 h-6" />
+              </div>
+            )}
             <div>
               <p className="text-[10px] font-black text-primary uppercase tracking-widest">{t("recentRequests")}</p>
               <h3 className="font-bold text-white text-lg leading-tight">{renterName}</h3>
-
+              <div className="flex items-center gap-2 mt-1">
+                {experience && (
+                  <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-widest text-white/60 bg-white/5 px-2 py-0.5 rounded-full">
+                    Exp: {experience} y
+                  </span>
+                )}
+                {purpose && (
+                  <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-widest text-primary/80 bg-primary/10 px-2 py-0.5 rounded-full">
+                    <Target className="w-2 h-2" />
+                    {purpose}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
-          <div className="text-right">
+          <div className="text-right flex-shrink-0">
             <p className="text-[10px] font-bold text-white/40 uppercase tracking-tight">Earnings</p>
             <p className="text-primary font-black text-xl">{booking.total_price} TND</p>
           </div>

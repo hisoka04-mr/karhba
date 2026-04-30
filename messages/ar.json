@@ -35,7 +35,19 @@
     "orContinueWith": "أو تابع مع",
     "role": "أريد",
     "roleUser": "استئجار سيارات",
-    "roleOwner": "عرض سياراتي"
+    "roleOwner": "عرض سياراتي",
+    "drivingExperience": "خبرة القيادة",
+    "purposeOfRenting": "الغرض من الاستئجار",
+    "expLessThan1": "أقل من سنة",
+    "exp1To3": "1-3 سنوات",
+    "exp3To5": "3-5 سنوات",
+    "expMoreThan5": "أكثر من 5 سنوات",
+    "purposeTourism": "سياحة / ترفيه",
+    "purposeBusiness": "عمل / تجارة",
+    "purposeCommute": "تنقل يومي",
+    "purposeOccasion": "مناسبة خاصة",
+    "selectExperience": "اختر الخبرة",
+    "selectPurpose": "اختر الغرض"
   },
   "Cars": {
     "title": "تصفح السيارات",

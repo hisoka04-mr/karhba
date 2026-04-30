@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { PlusCircle, Car, Settings, User } from "lucide-react";
 import OwnerCars from "../OwnerCars";
+import AvatarUpload from "@/components/profile/AvatarUpload";
 
 export default async function ProfileSettingsPage({ params: { locale } }: { params: { locale: string } }) {
   const tDash = await getTranslations("Dashboard");
@@ -25,10 +26,8 @@ export default async function ProfileSettingsPage({ params: { locale } }: { para
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="flex justify-between items-center mb-12">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-3xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20 shadow-lg shadow-primary/10">
-            <User className="w-8 h-8" />
-          </div>
+        <div className="flex items-center gap-6">
+          <AvatarUpload userId={user.id} currentAvatarUrl={user.user_metadata?.avatar_url} />
           <div>
             <h1 className="text-3xl font-black text-white tracking-tight uppercase">{tProf("title")} <span className="text-primary">{tProf("settings")}</span></h1>
             <p className="text-muted-foreground font-medium uppercase text-[10px] tracking-widest mt-1">{tProf("subtitle")}</p>

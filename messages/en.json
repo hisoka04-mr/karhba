@@ -40,7 +40,19 @@
     "orContinueWith": "Or continue with",
     "role": "I want to",
     "roleUser": "Rent Cars",
-    "roleOwner": "List My Cars"
+    "roleOwner": "List My Cars",
+    "drivingExperience": "Driving Experience",
+    "purposeOfRenting": "Purpose of Renting",
+    "expLessThan1": "Less than 1 year",
+    "exp1To3": "1-3 years",
+    "exp3To5": "3-5 years",
+    "expMoreThan5": "5+ years",
+    "purposeTourism": "Tourism / Leisure",
+    "purposeBusiness": "Business / Work",
+    "purposeCommute": "Daily Commute",
+    "purposeOccasion": "Special Occasion",
+    "selectExperience": "Select experience",
+    "selectPurpose": "Select purpose"
   },
   "Cars": {
     "title": "Browse Cars",

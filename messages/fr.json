@@ -35,7 +35,19 @@
     "orContinueWith": "Ou continuer avec",
     "role": "Je souhaite",
     "roleUser": "Louer des Voitures",
-    "roleOwner": "Lister mes Voitures"
+    "roleOwner": "Lister mes Voitures",
+    "drivingExperience": "Expérience de conduite",
+    "purposeOfRenting": "Motif de location",
+    "expLessThan1": "Moins d'un an",
+    "exp1To3": "1 à 3 ans",
+    "exp3To5": "3 à 5 ans",
+    "expMoreThan5": "Plus de 5 ans",
+    "purposeTourism": "Tourisme / Loisirs",
+    "purposeBusiness": "Affaires / Travail",
+    "purposeCommute": "Trajet quotidien",
+    "purposeOccasion": "Occasion spéciale",
+    "selectExperience": "Sélectionner l'expérience",
+    "selectPurpose": "Sélectionner le motif"
   },
   "Cars": {
     "title": "Parcourir les voitures",

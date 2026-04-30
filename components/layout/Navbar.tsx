@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { useTranslations, useLocale } from "next-intl";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { Car, User, Menu, X, LogOut, ChevronDown, Bell, Settings, TrendingUp } from "lucide-react";
@@ -17,6 +18,7 @@ export default function Navbar({ user }: { user: any }) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -32,17 +34,20 @@ export default function Navbar({ user }: { user: any }) {
           .eq("user_id", user.id)
           .eq("is_read", false)
           .order("created_at", { ascending: false });
-        if (data) setNotifications(data);
+        if (data) {
+          setNotifications(data);
+          setUnreadCount(data.length);
+        }
       };
       fetchNotifications();
     }
   }, [user]);
 
   const markNotificationsRead = async () => {
-    if (notifications.length === 0) return;
+    if (unreadCount === 0) return;
     const supabase = createClient();
     await supabase.rpc("mark_notifications_read", { p_user_id: user.id });
-    setNotifications([]);
+    setUnreadCount(0);
   };
 
   useEffect(() => {
@@ -89,6 +94,21 @@ export default function Navbar({ user }: { user: any }) {
 
   const avatarLetter = user?.email?.[0]?.toUpperCase() ?? "U";
 
+  const renderAvatar = (className: string) => {
+    if (user?.user_metadata?.avatar_url) {
+      return (
+        <div className={`relative overflow-hidden ${className}`}>
+          <Image src={user.user_metadata.avatar_url} alt="Avatar" fill className="object-cover" />
+        </div>
+      );
+    }
+    return (
+      <div className={`bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold ${className}`}>
+        {avatarLetter}
+      </div>
+    );
+  };
+
   return (
     <motion.nav
       initial={{ y: -80, opacity: 0 }}
@@ -134,6 +154,9 @@ export default function Navbar({ user }: { user: any }) {
                   }`}
                 >
                   {link.label}
+                  {unreadCount > 0 && (link.href.includes('/dashboard') || link.href.includes('/bookings')) && (
+                    <span className="absolute -top-1 -right-3 w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]" />
+                  )}
                   <span className={`absolute -bottom-1 left-0 h-0.5 bg-primary rounded-full transition-all duration-300 ${
                     isActive ? "w-full" : "w-0 group-hover:w-full"
                   }`} />
@@ -167,7 +190,7 @@ export default function Navbar({ user }: { user: any }) {
                     className="relative p-2 text-muted-foreground hover:text-white transition-colors"
                   >
                     <Bell className="w-5 h-5" />
-                    {notifications.length > 0 && (
+                    {unreadCount > 0 && (
                       <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-zinc-900" />
                     )}
                   </button>
@@ -211,9 +234,7 @@ export default function Navbar({ user }: { user: any }) {
                     }}
                     className="flex items-center gap-2 group"
                   >
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-sm font-bold shadow-md shadow-primary/30 group-hover:shadow-primary/50 transition-shadow">
-                      {avatarLetter}
-                    </div>
+                    {renderAvatar("w-9 h-9 rounded-full text-sm shadow-md shadow-primary/30 group-hover:shadow-primary/50 transition-shadow")}
                     <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${showDropdown ? "rotate-180" : ""}`} />
                   </button>
 
@@ -227,42 +248,20 @@ export default function Navbar({ user }: { user: any }) {
                       className="absolute right-0 mt-2 w-52 glass-card rounded-2xl shadow-2xl shadow-black/40 overflow-hidden py-1"
                     >
                       <div className="px-4 py-3 border-b border-white/5">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-sm font-bold mb-2">
-                          {avatarLetter}
-                        </div>
+                        {renderAvatar("w-8 h-8 rounded-full text-sm mb-2")}
                         <p className="text-xs text-muted-foreground">Signed in as</p>
                         <p className="text-sm font-medium text-white truncate">{user.email}</p>
                       </div>
                       <div className="py-1">
-                        {!isOwner && (
+                        {isOwner && (
                           <Link
-                            href={`/${locale}/bookings`}
+                            href={`/${locale}/dashboard/profile`}
                             onClick={() => setShowDropdown(false)}
                             className="flex items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground hover:text-white hover:bg-white/5 transition-colors"
                           >
-                            <User className="w-4 h-4" />
-                            My Bookings
+                            <Settings className="w-4 h-4 text-primary" />
+                            Profile Settings
                           </Link>
-                        )}
-                        {isOwner && (
-                          <>
-                            <Link
-                              href={`/${locale}/dashboard`}
-                              onClick={() => setShowDropdown(false)}
-                              className="flex items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground hover:text-white hover:bg-white/5 transition-colors"
-                            >
-                              <TrendingUp className="w-4 h-4 text-primary" />
-                              Dashboard
-                            </Link>
-                            <Link
-                              href={`/${locale}/dashboard/profile`}
-                              onClick={() => setShowDropdown(false)}
-                              className="flex items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground hover:text-white hover:bg-white/5 transition-colors"
-                            >
-                              <Settings className="w-4 h-4 text-primary" />
-                              Profile Settings
-                            </Link>
-                          </>
                         )}
                         <button
                           onClick={handleSignOut}
@@ -290,11 +289,7 @@ export default function Navbar({ user }: { user: any }) {
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center gap-3">
             <LanguageSwitcher />
-            {user && (
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-xs font-bold">
-                {avatarLetter}
-              </div>
-            )}
+            {user && renderAvatar("w-8 h-8 rounded-full text-xs")}
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-muted-foreground hover:text-white p-1 rounded-lg hover:bg-white/5 transition-colors"
@@ -330,33 +325,29 @@ export default function Navbar({ user }: { user: any }) {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`block px-3 py-3 text-base font-medium rounded-xl transition-colors ${
+                  className={`relative block px-3 py-3 text-base font-medium rounded-xl transition-colors ${
                     pathname.startsWith(link.href)
                       ? "text-white bg-white/5"
                       : "text-muted-foreground hover:text-white hover:bg-white/5"
                   }`}
                 >
-                  {link.label}
+                  <div className="flex items-center justify-between">
+                    <span>{link.label}</span>
+                    {unreadCount > 0 && (link.href.includes('/dashboard') || link.href.includes('/bookings')) && (
+                      <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]" />
+                    )}
+                  </div>
                 </Link>
               ))}
               <div className="pt-4 border-t border-white/5 mt-2">
                 {user ? (
                   <>
                     <div className="flex items-center gap-3 px-3 py-2 mb-2">
-                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
-                        {avatarLetter}
-                      </div>
+                      {renderAvatar("w-9 h-9 rounded-full text-sm shrink-0")}
                       <p className="text-sm text-white font-medium truncate">{user.email}</p>
                     </div>
                     {isOwner && (
                       <div className="flex flex-col gap-2 mb-2">
-                        <Link
-                          href={`/${locale}/dashboard`}
-                          className="w-full flex items-center justify-center gap-2 py-3 text-sm font-semibold text-white bg-white/5 border border-white/10 rounded-xl"
-                        >
-                          <TrendingUp className="w-4 h-4 text-primary" />
-                          Dashboard
-                        </Link>
                         <Link
                           href={`/${locale}/dashboard/profile`}
                           className="w-full flex items-center justify-center gap-2 py-3 text-sm font-semibold text-white bg-white/5 border border-white/10 rounded-xl"

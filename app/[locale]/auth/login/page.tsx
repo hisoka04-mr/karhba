@@ -26,7 +26,18 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center p-4">
+    <div className="relative min-h-[calc(100vh-64px)] flex items-center justify-center p-4 overflow-hidden bg-grid">
+      {/* Animated background blobs */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-5%] w-[600px] h-[600px] bg-orange-500/8 rounded-full blur-[120px] animate-blob" />
+        <div className="absolute bottom-[-10%] right-[-5%] w-[500px] h-[500px] bg-orange-600/10 rounded-full blur-[100px] animate-blob-delay" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-orange-400/3 rounded-full blur-[160px] animate-pulse-slow" />
+      </div>
+
+      {/* Decorative ring */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="w-[700px] h-[700px] rounded-full border border-orange-500/5 animate-spin-slow" />
+      </div>
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
