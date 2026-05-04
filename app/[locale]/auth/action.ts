@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 
 export async function login(formData: FormData, locale: string) {
   const supabase = createClient();
@@ -9,13 +10,25 @@ export async function login(formData: FormData, locale: string) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { error, data: signInData } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
 
   if (error) {
     return { error: error.message };
+  }
+
+  if (signInData?.user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("full_name, driving_experience, age")
+      .eq("id", signInData.user.id)
+      .single();
+
+    if (!profile?.full_name || !profile?.driving_experience || !profile?.age) {
+      redirect(`/${locale}/auth/complete-profile`);
+    }
   }
 
   redirect(`/${locale}/cars`);
@@ -27,24 +40,13 @@ export async function register(formData: FormData, locale: string) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const fullName = formData.get("fullName") as string;
-  const phone = formData.get("phone") as string;
-  const role = formData.get("role") as string;
 
-  const drivingExperience = formData.get("drivingExperience") as string;
-  const rentingPurpose = formData.get("rentingPurpose") as string;
-  const avatarFile = formData.get("avatar") as File;
-
-  let avatarUrl = null;
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: {
         full_name: fullName,
-        phone,
-        is_owner: role === "owner",
-        driving_experience: drivingExperience,
-        renting_purpose: rentingPurpose,
       },
     },
   });
@@ -53,35 +55,100 @@ export async function register(formData: FormData, locale: string) {
     return { error: error.message };
   }
 
-  // Handle avatar upload if user created
-  if (data.user && avatarFile && avatarFile.size > 0) {
+  // Redirect to the profile completion page
+  redirect(`/${locale}/auth/complete-profile`);
+}
+
+export async function completeProfile(formData: FormData, locale: string) {
+  const supabase = createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
+
+  const phone = formData.get("phone") as string;
+  const role = formData.get("role") as string;
+  const drivingExperience = formData.get("drivingExperience") as string;
+  const age = formData.get("age") as string;
+  const avatarFile = formData.get("avatar") as File;
+
+  // Update user metadata
+  await supabase.auth.updateUser({
+    data: {
+      phone,
+      is_owner: role === "owner",
+      driving_experience: drivingExperience,
+      age: age ? parseInt(age, 10) : null,
+    },
+  });
+
+  // Update profiles table
+  const profileUpdate: Record<string, unknown> = {
+    phone,
+    is_owner: role === "owner",
+    driving_experience: drivingExperience,
+    age: age ? parseInt(age, 10) : null,
+  };
+
+  // Handle avatar upload
+  if (avatarFile && avatarFile.size > 0) {
     const fileExt = avatarFile.name.split('.').pop();
-    const fileName = `${data.user.id}.${fileExt}`;
+    const fileName = `${user.id}.${fileExt}`;
     const filePath = `${fileName}`;
 
     const { error: uploadError } = await supabase.storage
       .from('avatars')
-      .upload(filePath, avatarFile);
+      .upload(filePath, avatarFile, { upsert: true });
 
     if (!uploadError) {
       const { data: { publicUrl } } = supabase.storage
         .from('avatars')
         .getPublicUrl(filePath);
       
-      // Update metadata with avatar URL
       await supabase.auth.updateUser({
         data: { avatar_url: publicUrl }
       });
 
-      // Update profiles table
-      await supabase
-        .from('profiles')
-        .update({ avatar_url: publicUrl })
-        .eq('id', data.user.id);
+      profileUpdate.avatar_url = publicUrl;
     }
   }
 
+  await supabase
+    .from('profiles')
+    .update(profileUpdate)
+    .eq('id', user.id);
+
   redirect(`/${locale}/cars`);
+}
+
+export async function signInWithGoogle(locale: string) {
+  const supabase = createClient();
+  const headersList = headers();
+  const origin = headersList.get("origin") || headersList.get("x-forwarded-host") || "";
+  const protocol = headersList.get("x-forwarded-proto") || "https";
+  const siteUrl = origin.startsWith("http") ? origin : `${protocol}://${origin}`;
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `http://localhost:3000/${locale}/auth/callback?next=/${locale}/auth/complete-profile`,
+      queryParams: {
+        access_type: "offline",
+        prompt: "consent",
+      },
+    },
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  if (data?.url) {
+    redirect(data.url);
+  }
+
+  return { error: "Something went wrong" };
 }
 
 export async function logout(locale: string) {

@@ -41,7 +41,8 @@ export async function middleware(request: NextRequest) {
     path.startsWith(`/${locale}/dashboard`) || 
     path.startsWith(`/${locale}/bookings`) || 
     path.startsWith(`/${locale}/owner`) || 
-    path.startsWith(`/${locale}/profile`)
+    path.startsWith(`/${locale}/profile`) ||
+    path.startsWith(`/${locale}/auth/complete-profile`)
   )
 
   if (isProtected && !user) {

@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import toast from "react-hot-toast";
 
 interface BookingFormProps {
@@ -14,8 +15,11 @@ interface BookingFormProps {
 export default function BookingForm({ carId, ownerId, pricePerDay }: BookingFormProps) {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [rentingPurpose, setRentingPurpose] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const t = useTranslations("Auth");
+  const bt = useTranslations("Bookings");
 
   // Calculate total price based on dates
   const totalPrice = useMemo(() => {
@@ -40,6 +44,11 @@ export default function BookingForm({ carId, ownerId, pricePerDay }: BookingForm
       return;
     }
 
+    if (!rentingPurpose) {
+      toast.error(t("selectPurpose"));
+      return;
+    }
+
     setLoading(true);
     try {
       const supabase = createClient();
@@ -57,6 +66,17 @@ export default function BookingForm({ carId, ownerId, pricePerDay }: BookingForm
         return;
       }
 
+      // Update user's renting purpose in their profile
+      await supabase
+        .from("profiles")
+        .update({ renting_purpose: rentingPurpose })
+        .eq("id", user.id);
+
+      // Also update user metadata
+      await supabase.auth.updateUser({
+        data: { renting_purpose: rentingPurpose }
+      });
+
       // Insert booking request
       const { data: booking, error } = await supabase.from("bookings").insert([{
         car_id: carId,
@@ -65,7 +85,8 @@ export default function BookingForm({ carId, ownerId, pricePerDay }: BookingForm
         start_date: startDate,
         end_date: endDate,
         total_price: totalPrice,
-        status: "pending"
+        status: "pending",
+        renting_purpose: rentingPurpose
       }]).select().single();
 
       if (error) {
@@ -84,6 +105,7 @@ export default function BookingForm({ carId, ownerId, pricePerDay }: BookingForm
       // Reset form
       setStartDate("");
       setEndDate("");
+      setRentingPurpose("");
       
       // Redirect to bookings page to see the pending request
       // We will assume the locale is in the pathname or we can just refresh
@@ -107,7 +129,7 @@ export default function BookingForm({ carId, ownerId, pricePerDay }: BookingForm
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1">
-            <label className="text-sm font-medium text-white/80">Start Date</label>
+            <label className="text-sm font-medium text-white/80">{bt("startDate")}</label>
             <input 
               type="date" 
               required
@@ -118,7 +140,7 @@ export default function BookingForm({ carId, ownerId, pricePerDay }: BookingForm
             />
           </div>
           <div className="space-y-1">
-            <label className="text-sm font-medium text-white/80">End Date</label>
+            <label className="text-sm font-medium text-white/80">{bt("endDate")}</label>
             <input 
               type="date" 
               required
@@ -130,8 +152,25 @@ export default function BookingForm({ carId, ownerId, pricePerDay }: BookingForm
           </div>
         </div>
 
+        {/* Purpose of Renting - placed right under the calendar/dates */}
+        <div className="space-y-1">
+          <label className="text-sm font-medium text-white/80">{t("purposeOfRenting")}</label>
+          <select
+            value={rentingPurpose}
+            onChange={(e) => setRentingPurpose(e.target.value)}
+            required
+            className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 text-white appearance-none"
+          >
+            <option value="" disabled className="bg-gray-900">{t("selectPurpose")}</option>
+            <option value="tourism" className="bg-gray-900">{t("purposeTourism")}</option>
+            <option value="business" className="bg-gray-900">{t("purposeBusiness")}</option>
+            <option value="commute" className="bg-gray-900">{t("purposeCommute")}</option>
+            <option value="occasion" className="bg-gray-900">{t("purposeOccasion")}</option>
+          </select>
+        </div>
+
         <div className="flex justify-between items-center py-2 border-t border-white/10">
-          <span className="text-white/80">Total Price</span>
+          <span className="text-white/80">{bt("totalPrice")}</span>
           <span className="text-xl font-bold text-primary">{totalPrice} TND</span>
         </div>
 

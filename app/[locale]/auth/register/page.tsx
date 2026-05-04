@@ -3,31 +3,17 @@
 import { useTranslations, useLocale } from "next-intl";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Car, Mail, Lock, User, Phone, ArrowRight } from "lucide-react";
-import { register as signup } from "../action";
-import { useState, useRef } from "react";
+import { Car, Mail, Lock, User, ArrowRight } from "lucide-react";
+import { register as signup, signInWithGoogle } from "../action";
+import { useState } from "react";
 import toast from "react-hot-toast";
-import { Camera } from "lucide-react";
-import Image from "next/image";
 
 export default function RegisterPage() {
   const t = useTranslations("Auth");
   const common = useTranslations("Common");
   const locale = useLocale();
   const [loading, setLoading] = useState(false);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setAvatarPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   async function handleSubmit(formData: FormData) {
     setLoading(true);
@@ -35,6 +21,19 @@ export default function RegisterPage() {
     if (result?.error) {
       toast.error(result.error);
       setLoading(false);
+    }
+  }
+
+  async function handleGoogleSignIn() {
+    setGoogleLoading(true);
+    try {
+      const result = await signInWithGoogle(locale);
+      if (result?.error) {
+        toast.error(result.error);
+        setGoogleLoading(false);
+      }
+    } catch {
+      // redirect throws, this is expected
     }
   }
 
@@ -66,58 +65,33 @@ export default function RegisterPage() {
               <Car className="text-white w-10 h-10" />
             </div>
             <h1 className="text-3xl font-bold mb-2">{t("registerTitle")}</h1>
-            <p className="text-muted-foreground">Join the Karhba community</p>
+            <p className="text-muted-foreground">{t("registerSubtitle")}</p>
           </div>
 
-          <form action={handleSubmit} className="space-y-6">
-            {/* Avatar Upload */}
-            <div className="flex flex-col items-center mb-8">
-              <div 
-                onClick={() => fileInputRef.current?.click()}
-                className="relative w-24 h-24 rounded-full bg-secondary/50 border-2 border-dashed border-white/10 flex items-center justify-center cursor-pointer group overflow-hidden transition-all hover:border-primary/50"
-              >
-                {avatarPreview ? (
-                  <Image src={avatarPreview} alt="Preview" fill className="object-cover" />
-                ) : (
-                  <div className="text-center transition-transform group-hover:scale-110">
-                    <Camera className="w-8 h-8 text-muted-foreground mb-1 mx-auto" />
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Photo</span>
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <Camera className="w-6 h-6 text-white" />
-                </div>
-              </div>
-              <input
-                type="file"
-                name="avatar"
-                ref={fileInputRef}
-                onChange={handleAvatarChange}
-                className="hidden"
-                accept="image/*"
-              />
-              <p className="text-[10px] font-black text-white/40 uppercase tracking-widest mt-2">Upload Profile Picture</p>
-            </div>
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest px-1">{t("role")}</label>
-              <div className="flex gap-4">
-                <label className="flex-1 cursor-pointer group">
-                  <input type="radio" name="role" value="user" className="peer sr-only" defaultChecked />
-                  <div className="text-center p-3 rounded-2xl border border-white/5 bg-secondary/50 peer-checked:bg-primary/20 peer-checked:border-primary/50 transition-all">
-                    <User className="w-5 h-5 mx-auto mb-1 text-muted-foreground group-[.peer:checked+&]:text-primary" />
-                    <span className="text-sm font-medium">{t("roleUser")}</span>
-                  </div>
-                </label>
-                <label className="flex-1 cursor-pointer group">
-                  <input type="radio" name="role" value="owner" className="peer sr-only" />
-                  <div className="text-center p-3 rounded-2xl border border-white/5 bg-secondary/50 peer-checked:bg-primary/20 peer-checked:border-primary/50 transition-all">
-                    <Car className="w-5 h-5 mx-auto mb-1 text-muted-foreground group-[.peer:checked+&]:text-primary" />
-                    <span className="text-sm font-medium">{t("roleOwner")}</span>
-                  </div>
-                </label>
-              </div>
-            </div>
+          {/* Google Sign Up Button */}
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            disabled={googleLoading || loading}
+            className="w-full flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white font-semibold py-4 rounded-2xl transition-all duration-300 mb-6 disabled:opacity-50 disabled:cursor-not-allowed group"
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            {googleLoading ? common("loading") : t("googleSignUp")}
+          </button>
 
+          {/* Divider */}
+          <div className="flex items-center gap-4 mb-6">
+            <div className="flex-1 h-px bg-white/10" />
+            <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{t("orContinueWith")}</span>
+            <div className="flex-1 h-px bg-white/10" />
+          </div>
+
+          <form action={handleSubmit} className="space-y-5">
             <div className="space-y-2">
               <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest px-1">{t("fullName")}</label>
               <div className="relative">
@@ -127,20 +101,6 @@ export default function RegisterPage() {
                   type="text"
                   required
                   placeholder="Ahmed Ben Ali"
-                  className="w-full bg-secondary/50 border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-sm focus:border-primary/50 focus:ring-0 transition-all outline-none"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest px-1">{t("phone")}</label>
-              <div className="relative">
-                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <input
-                  name="phone"
-                  type="tel"
-                  required
-                  placeholder="216 XX XXX XXX"
                   className="w-full bg-secondary/50 border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-sm focus:border-primary/50 focus:ring-0 transition-all outline-none"
                 />
               </div>
@@ -174,45 +134,9 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest px-1">{t("drivingExperience")}</label>
-              <div className="relative">
-                <select
-                  name="drivingExperience"
-                  required
-                  defaultValue=""
-                  className="w-full bg-secondary/50 border border-white/5 rounded-2xl py-4 px-4 text-sm focus:border-primary/50 focus:ring-0 transition-all outline-none appearance-none"
-                >
-                  <option value="" disabled>{t("selectExperience")}</option>
-                  <option value="<1">{t("expLessThan1")}</option>
-                  <option value="1-3">{t("exp1To3")}</option>
-                  <option value="3-5">{t("exp3To5")}</option>
-                  <option value="5+">{t("expMoreThan5")}</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest px-1">{t("purposeOfRenting")}</label>
-              <div className="relative">
-                <select
-                  name="rentingPurpose"
-                  required
-                  defaultValue=""
-                  className="w-full bg-secondary/50 border border-white/5 rounded-2xl py-4 px-4 text-sm focus:border-primary/50 focus:ring-0 transition-all outline-none appearance-none"
-                >
-                  <option value="" disabled>{t("selectPurpose")}</option>
-                  <option value="tourism">{t("purposeTourism")}</option>
-                  <option value="business">{t("purposeBusiness")}</option>
-                  <option value="commute">{t("purposeCommute")}</option>
-                  <option value="occasion">{t("purposeOccasion")}</option>
-                </select>
-              </div>
-            </div>
-
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || googleLoading}
               className="w-full bg-primary hover:bg-orange-600 text-white font-extrabold py-5 rounded-2xl shadow-xl shadow-primary/30 transition-all text-lg flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? common("loading") : t("submit_register")}
