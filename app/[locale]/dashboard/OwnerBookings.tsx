@@ -6,6 +6,7 @@ import { updateBookingStatus } from "./actions"
 import { CheckCircle, XCircle, Clock, Calendar, Check, X } from "lucide-react"
 import toast from "react-hot-toast"
 import { useTranslations, useLocale } from "next-intl"
+import ChatButton from "../bookings/ChatButton"
 
 const STATUS_CONFIG: Record<string, { label: string; icon: any; className: string }> = {
   pending: {
@@ -128,6 +129,12 @@ export default function OwnerBookings({ bookings }: { bookings: any[] }) {
 
               {currentStatus === "confirmed" && (
                 <div className="flex items-center gap-3 w-full md:w-auto">
+                  {booking.chats && (
+                    <ChatButton
+                      chatId={Array.isArray(booking.chats) ? booking.chats[0]?.id : booking.chats.id}
+                      recipientName={renterName}
+                    />
+                  )}
                   <button
                     onClick={() => handleStatusUpdate(booking.id, "completed")}
                     disabled={loading === booking.id}

@@ -3,6 +3,8 @@ import "../globals.css";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import ChatBox from "@/components/chat/ChatBox";
 import { Toaster } from "react-hot-toast";
 import { createClient } from "@/lib/supabase/server";
 
@@ -29,6 +31,8 @@ export default async function LocaleLayout({
           <main className="flex-grow">
             {children}
           </main>
+          <Footer />
+          <ChatBox />
           <Toaster position="bottom-right" />
           {/* Footer would go here */}
         </NextIntlClientProvider>

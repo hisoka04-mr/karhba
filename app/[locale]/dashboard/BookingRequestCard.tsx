@@ -1,12 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { Check, X, Clock, Calendar, User, Car, Target } from "lucide-react"
+import { Check, X, Clock, Calendar, User, Car, Target, Phone } from "lucide-react"
 import { updateBookingStatus } from "./actions"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 import { useTranslations, useLocale } from "next-intl"
 import Image from "next/image"
+import { useChatStore } from "@/lib/store/useChatStore"
 
 interface BookingRequestCardProps {
   booking: any
@@ -19,12 +20,19 @@ export default function BookingRequestCard({ booking }: BookingRequestCardProps)
   const [loading, setLoading] = useState(false);
   const [isProcessed, setIsProcessed] = useState(false);
 
+  const { openChat } = useChatStore();
+
   const handleStatusUpdate = async (status: "confirmed" | "cancelled") => {
     setLoading(true);
     try {
-      await updateBookingStatus(booking.id, status);
+      const result = await updateBookingStatus(booking.id, status);
       toast.success(status === "confirmed" ? t("accept") + " — success!" : t("reject") + " — success!");
       setIsProcessed(true);
+      
+      if (status === "confirmed" && result?.chatId) {
+        openChat(result.chatId, renterName);
+      }
+      
       router.refresh();
     } catch (error: any) {
       toast.error(error.message || "Failed to update booking status");
@@ -41,6 +49,8 @@ export default function BookingRequestCard({ booking }: BookingRequestCardProps)
   const avatarUrl = booking.renter?.avatar_url;
   const experience = booking.renter?.driving_experience;
   const purpose = booking.renter?.renting_purpose;
+  const age = booking.renter?.age;
+  const phone = booking.renter?.phone;
 
   const startDate = booking.start_date ? new Date(booking.start_date).toLocaleDateString(locale) : "—";
   const endDate = booking.end_date ? new Date(booking.end_date).toLocaleDateString(locale) : "—";
@@ -63,10 +73,21 @@ export default function BookingRequestCard({ booking }: BookingRequestCardProps)
             <div>
               <p className="text-[10px] font-black text-primary uppercase tracking-widest">{t("recentRequests")}</p>
               <h3 className="font-bold text-white text-lg leading-tight">{renterName}</h3>
-              <div className="flex items-center gap-2 mt-1">
+              <div className="flex flex-wrap items-center gap-2 mt-1 max-w-[200px] sm:max-w-none">
+                {age && (
+                  <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-widest text-white/80 bg-white/10 px-2 py-0.5 rounded-full">
+                    {age} yrs
+                  </span>
+                )}
                 {experience && (
                   <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-widest text-white/60 bg-white/5 px-2 py-0.5 rounded-full">
                     Exp: {experience} y
+                  </span>
+                )}
+                {phone && (
+                  <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-widest text-white/80 bg-white/10 px-2 py-0.5 rounded-full">
+                    <Phone className="w-2 h-2" />
+                    {phone}
                   </span>
                 )}
                 {purpose && (

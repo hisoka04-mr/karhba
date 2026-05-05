@@ -134,6 +134,26 @@ export default function RegisterPage() {
               </div>
             </div>
 
+            <div className="flex items-start gap-3 px-1 pt-2">
+              <input
+                type="checkbox"
+                required
+                id="terms"
+                className="mt-1 w-4 h-4 rounded border-white/10 bg-secondary/50 text-primary focus:ring-primary focus:ring-offset-background"
+              />
+              <label htmlFor="terms" className="text-xs text-muted-foreground leading-tight">
+                I agree to the{" "}
+                <Link href={`/${locale}/terms`} className="text-white hover:text-primary underline transition-colors" target="_blank">
+                  Terms of Service
+                </Link>
+                ,{" "}
+                <Link href={`/${locale}/privacy`} className="text-white hover:text-primary underline transition-colors" target="_blank">
+                  Privacy Policy
+                </Link>
+                , and confirm I am at least 18 years old.
+              </label>
+            </div>
+
             <button
               type="submit"
               disabled={loading || googleLoading}

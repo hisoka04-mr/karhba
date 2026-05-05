@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { getLocale } from "next-intl/server";
 import { Calendar, Car, CheckCircle, Clock, XCircle, AlertCircle, MapPin } from "lucide-react";
+import ChatButton from "./ChatButton";
 
 const STATUS_CONFIG: Record<string, { label: string; icon: any; className: string }> = {
   pending: {
@@ -52,7 +53,11 @@ export default async function BookingsPage() {
         city,
         price_per_day,
         address,
-        hide_address
+        hide_address,
+        owner_id
+      ),
+      chats (
+        id
       )
     `)
     .eq("renter_id", user.id)
@@ -160,15 +165,25 @@ function BookingCard({ booking, index }: { booking: any; index: number }) {
           </div>
 
           {/* Dates + Price */}
-          <div className="flex flex-wrap gap-4 text-sm">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Calendar className="w-4 h-4 text-primary" />
-              <span>{startDate} → {endDate}</span>
-            </div>
-            {booking.total_price && (
-              <div className="font-bold text-primary">
-                {booking.total_price} TND total
+          <div className="flex flex-wrap items-center justify-between gap-4 mt-2 border-t border-white/10 pt-4">
+            <div className="flex flex-wrap gap-4 text-sm">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Calendar className="w-4 h-4 text-primary" />
+                <span>{startDate} → {endDate}</span>
               </div>
+              {booking.total_price && (
+                <div className="font-bold text-primary flex items-center gap-2 border-l border-white/10 pl-4">
+                  {booking.total_price} TND total
+                </div>
+              )}
+            </div>
+
+            {/* Chat Action */}
+            {booking.status === "confirmed" && booking.chats && (
+              <ChatButton
+                chatId={Array.isArray(booking.chats) ? booking.chats[0]?.id : booking.chats.id}
+                recipientName="Owner"
+              />
             )}
           </div>
         </div>

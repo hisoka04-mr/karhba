@@ -223,5 +223,33 @@
     "cancelled": "Cancelled / Rejected",
     "tnd": "TND",
     "daysSuffix": "days"
+  },
+  "Footer": {
+    "about": "About",
+    "about_us": "About Us",
+    "about_desc1": "Karhba is the first peer-to-peer car rental platform in Tunisia. Our mission is to transform the way Tunisians move by offering a flexible, affordable, and secure alternative to traditional rental.",
+    "about_desc2": "Whether you're a traveler looking for the perfect vehicle to explore the country or an owner wishing to monetize your car, Karhba connects you to a trusted community.",
+    "customer_service": "Customer Service",
+    "contact_us": "Contact Us",
+    "legal": "Legal",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "cookies": "Cookie Policy",
+    "follow_us": "Follow Us",
+    "rights": "© 2026 Karhba. All rights reserved."
+  },
+  "Contact": {
+    "title": "Contact Us",
+    "subtitle": "Have questions? We're here to help.",
+    "name": "Full Name",
+    "email": "Email",
+    "subject": "Subject",
+    "message": "Message",
+    "send": "Send Message",
+    "sending": "Sending...",
+    "success": "Message sent successfully!",
+    "info": "Contact Information",
+    "address": "Tunis, Tunisia",
+    "phone": "+216 XX XXX XXX"
   }
 }

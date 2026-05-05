@@ -29,6 +29,7 @@ export default function HomePage() {
       <StatsSection />
       <FeaturesSection />
       <CtaSection />
+      <AboutSection />
     </div>
   );
 }
@@ -312,6 +313,38 @@ function CtaSection() {
                 {t("ctaBrowse")}
               </Link>
             </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function AboutSection() {
+  const t = useTranslations("Footer");
+  
+  return (
+    <section className="py-24 px-4 bg-zinc-900/30">
+      <div className="max-w-4xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="text-center"
+        >
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-8">
+            <Users className="w-8 h-8 text-primary" />
+          </div>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-6 tracking-tight">
+            {t("about")}
+          </h2>
+          <div className="space-y-6 text-muted-foreground text-lg leading-relaxed text-justify md:text-center">
+            <p>
+              {t("about_desc1")}
+            </p>
+            <p>
+              {t("about_desc2")}
+            </p>
           </div>
         </motion.div>
       </div>

@@ -29,7 +29,8 @@ export default async function DashboardPage({ params: { locale } }: { params: { 
       .select(`
         *,
         cars (brand, model, photos),
-        renter:profiles!renter_id (full_name, avatar_url, driving_experience, renting_purpose)
+        renter:profiles!renter_id (full_name, avatar_url, driving_experience, renting_purpose, age, phone),
+        chats (id)
       `)
       .in("car_id", carIds)
       .order("created_at", { ascending: false });

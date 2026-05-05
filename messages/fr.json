@@ -221,5 +221,33 @@
     "cancelled": "Annulé / Refusé",
     "tnd": "TND",
     "daysSuffix": "jours"
+  },
+  "Footer": {
+    "about": "À propos",
+    "about_us": "À propos de nous",
+    "about_desc1": "Karhba est la première plateforme de location de voitures entre particuliers en Tunisie. Notre mission est de transformer la façon dont les Tunisiens se déplacent en offrant une alternative flexible, économique et sécurisée à la location traditionnelle.",
+    "about_desc2": "Que vous soyez un voyageur à la recherche du véhicule idéal pour explorer le pays ou un propriétaire souhaitant rentabiliser sa voiture, Karhba vous connecte à une communauté de confiance.",
+    "customer_service": "Service client",
+    "contact_us": "Contactez-nous",
+    "legal": "Légal",
+    "terms": "Conditions d'utilisation",
+    "privacy": "Politique de confidentialité",
+    "cookies": "Politique relative aux cookies",
+    "follow_us": "Suivez-nous",
+    "rights": "© 2026 Karhba. Tous droits réservés."
+  },
+  "Contact": {
+    "title": "Contactez-nous",
+    "subtitle": "Vous avez des questions ? Nous sommes là pour vous aider.",
+    "name": "Nom complet",
+    "email": "Email",
+    "subject": "Sujet",
+    "message": "Message",
+    "send": "Envoyer le message",
+    "sending": "Envoi en cours...",
+    "success": "Message envoyé avec succès !",
+    "info": "Informations de contact",
+    "address": "Tunis, Tunisie",
+    "phone": "+216 XX XXX XXX"
   }
 }

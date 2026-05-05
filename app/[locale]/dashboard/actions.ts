@@ -86,6 +86,21 @@ export async function updateBookingStatus(bookingId: string, status: "confirmed"
 
   // Revalidate the dashboard and the main page to ensure fresh data
   revalidatePath("/", "layout");
+
+  let chatId = null;
+  if (status === "confirmed") {
+    // Fetch the newly created chat ID by the DB trigger
+    const { data: chatData, error: chatErr } = await supabase
+      .from("chats")
+      .select("id")
+      .eq("booking_id", bookingId)
+      .single();
+    if (!chatErr && chatData) {
+      chatId = chatData.id;
+    }
+  }
+
+  return { success: true, chatId };
 }
 
 export async function toggleCarVisibility(carId: string, isHidden: boolean) {
