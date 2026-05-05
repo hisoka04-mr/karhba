@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react"
 import { useChatStore } from "@/lib/store/useChatStore"
 import { createClient } from "@/lib/supabase/client"
 import { motion, AnimatePresence } from "framer-motion"
-import { X, Send, User } from "lucide-react"
+import { X, Send, User, MessageSquare } from "lucide-react"
 
 interface Message {
   id: string
