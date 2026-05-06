@@ -10,7 +10,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-export default function Navbar({ user }: { user: any }) {
+export default function Navbar({ user, isAdmin = false }: { user: any; isAdmin?: boolean }) {
   const t = useTranslations("Common");
   const locale = useLocale();
   const pathname = usePathname();
@@ -179,6 +179,16 @@ export default function Navbar({ user }: { user: any }) {
                   </Link>
                 )}
                 
+                {isAdmin && (
+                  <Link
+                    href={`/${locale}/admin`}
+                    className="px-4 py-2 text-sm font-semibold text-white bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-full hover:bg-indigo-500/30 transition-all shadow-md hidden sm:flex items-center gap-2"
+                  >
+                    <Settings className="w-4 h-4" />
+                    Admin Panel
+                  </Link>
+                )}
+                
                 {/* Notifications */}
                 <div className="relative" ref={notifRef}>
                   <button
@@ -261,6 +271,16 @@ export default function Navbar({ user }: { user: any }) {
                           >
                             <Settings className="w-4 h-4 text-primary" />
                             Profile Settings
+                          </Link>
+                        )}
+                        {isAdmin && (
+                          <Link
+                            href={`/${locale}/admin`}
+                            onClick={() => setShowDropdown(false)}
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-indigo-400 hover:text-indigo-300 hover:bg-white/5 transition-colors"
+                          >
+                            <Settings className="w-4 h-4 text-indigo-500" />
+                            Admin Panel
                           </Link>
                         )}
                         <button
@@ -354,6 +374,17 @@ export default function Navbar({ user }: { user: any }) {
                         >
                           <Settings className="w-4 h-4 text-primary" />
                           Profile Settings
+                        </Link>
+                      </div>
+                    )}
+                    {isAdmin && (
+                      <div className="flex flex-col gap-2 mb-2">
+                        <Link
+                          href={`/${locale}/admin`}
+                          className="w-full flex items-center justify-center gap-2 py-3 text-sm font-semibold text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 rounded-xl"
+                        >
+                          <Settings className="w-4 h-4 text-indigo-500" />
+                          Admin Panel
                         </Link>
                       </div>
                     )}

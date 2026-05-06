@@ -23,11 +23,21 @@ export default async function LocaleLayout({
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
+  let isAdmin = false;
+  let profile = null;
+  if (user) {
+    const { data } = await supabase.from("profiles").select("is_admin").eq("id", user.id).single();
+    if (data) {
+      isAdmin = !!data.is_admin;
+      profile = data;
+    }
+  }
+
   return (
     <html lang={locale} dir={dir} className="dark">
       <body className={`${inter.variable} font-sans antialiased bg-background text-foreground min-h-screen flex flex-col`}>
         <NextIntlClientProvider messages={messages} locale={locale}>
-          <Navbar user={user} />
+          <Navbar user={user} isAdmin={isAdmin} />
           <main className="flex-grow">
             {children}
           </main>

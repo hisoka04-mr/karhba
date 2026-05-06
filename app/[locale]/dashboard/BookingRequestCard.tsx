@@ -8,6 +8,7 @@ import toast from "react-hot-toast"
 import { useTranslations, useLocale } from "next-intl"
 import Image from "next/image"
 import { useChatStore } from "@/lib/store/useChatStore"
+import RenterInfoModal from "./RenterInfoModal"
 
 interface BookingRequestCardProps {
   booking: any
@@ -19,6 +20,7 @@ export default function BookingRequestCard({ booking }: BookingRequestCardProps)
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [isProcessed, setIsProcessed] = useState(false);
+  const [showRenterModal, setShowRenterModal] = useState(false);
 
   const { openChat } = useChatStore();
 
@@ -60,19 +62,22 @@ export default function BookingRequestCard({ booking }: BookingRequestCardProps)
       <div className="flex flex-col gap-6">
         {/* Header: Renter Info */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div 
+            className="flex items-center gap-3 cursor-pointer group/renter"
+            onClick={() => setShowRenterModal(true)}
+          >
             {avatarUrl ? (
-              <div className="w-12 h-12 rounded-2xl relative overflow-hidden group-hover:scale-110 transition-transform">
+              <div className="w-12 h-12 rounded-2xl relative overflow-hidden group-hover/renter:scale-110 group-hover/renter:shadow-lg group-hover/renter:shadow-primary/20 transition-all">
                 <Image src={avatarUrl} alt={renterName} fill className="object-cover" />
               </div>
             ) : (
-              <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+              <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center text-primary group-hover/renter:scale-110 group-hover/renter:shadow-lg group-hover/renter:shadow-primary/20 transition-all">
                 <User className="w-6 h-6" />
               </div>
             )}
             <div>
               <p className="text-[10px] font-black text-primary uppercase tracking-widest">{t("recentRequests")}</p>
-              <h3 className="font-bold text-white text-lg leading-tight">{renterName}</h3>
+              <h3 className="font-bold text-white text-lg leading-tight group-hover/renter:text-primary transition-colors">{renterName}</h3>
               <div className="flex flex-wrap items-center gap-2 mt-1 max-w-[200px] sm:max-w-none">
                 {age && (
                   <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-widest text-white/80 bg-white/10 px-2 py-0.5 rounded-full">
@@ -143,6 +148,12 @@ export default function BookingRequestCard({ booking }: BookingRequestCardProps)
           </button>
         </div>
       </div>
+      
+      <RenterInfoModal 
+        renter={booking.renter}
+        isOpen={showRenterModal}
+        onClose={() => setShowRenterModal(false)}
+      />
     </div>
   )
 }

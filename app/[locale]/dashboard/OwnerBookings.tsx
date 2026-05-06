@@ -7,6 +7,7 @@ import { CheckCircle, XCircle, Clock, Calendar, Check, X } from "lucide-react"
 import toast from "react-hot-toast"
 import { useTranslations, useLocale } from "next-intl"
 import ChatButton from "../bookings/ChatButton"
+import RenterInfoModal from "./RenterInfoModal"
 
 const STATUS_CONFIG: Record<string, { label: string; icon: any; className: string }> = {
   pending: {
@@ -38,6 +39,7 @@ export default function OwnerBookings({ bookings }: { bookings: any[] }) {
   // Local statuses for optimistic UI — key: bookingId, value: status string
   const [localStatuses, setLocalStatuses] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState<string | null>(null);
+  const [selectedRenter, setSelectedRenter] = useState<any | null>(null);
 
   const handleStatusUpdate = async (bookingId: string, status: "confirmed" | "cancelled" | "completed") => {
     setLoading(bookingId);
@@ -98,7 +100,15 @@ export default function OwnerBookings({ bookings }: { bookings: any[] }) {
                 <div className="flex items-start justify-between">
                   <div>
                     <h3 className="font-bold text-lg text-white">{t("bookingFor")} {carName}</h3>
-                    <p className="text-sm text-muted-foreground">{t("renter")} <span className="text-white">{renterName}</span></p>
+                    <p className="text-sm text-muted-foreground">
+                      {t("renter")}{" "}
+                      <span 
+                        className="text-white cursor-pointer hover:text-primary transition-colors hover:underline underline-offset-4"
+                        onClick={() => setSelectedRenter(booking.renter)}
+                      >
+                        {renterName}
+                      </span>
+                    </p>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border ${status.className}`}>
@@ -149,6 +159,12 @@ export default function OwnerBookings({ bookings }: { bookings: any[] }) {
           );
         })}
       </div>
+
+      <RenterInfoModal 
+        renter={selectedRenter}
+        isOpen={!!selectedRenter}
+        onClose={() => setSelectedRenter(null)}
+      />
     </div>
   );
 }
