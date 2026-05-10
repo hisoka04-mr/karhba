@@ -89,7 +89,31 @@ export default async function DashboardPage({ params: { locale } }: { params: { 
       </div>
 
       <div className="space-y-24">
-        {/* Pending Requests Section - THE FOCUS */}
+        {/* Cars Section */}
+        <div className="relative">
+          {cars && cars.length > 0 ? (
+            <OwnerCars cars={cars} />
+          ) : (
+            <div className="glass-card rounded-[2rem] p-12 text-center border-dashed border-white/10">
+              <div className="w-20 h-20 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <Car className="w-10 h-10 text-white/20" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-2">{t("noCarsListed")}</h3>
+              <p className="text-white/40 max-w-sm mx-auto mb-8">
+                {t("startEarningDesc")}
+              </p>
+              <Link
+                href={`/${locale}/dashboard/cars/new`}
+                className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-black rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-primary/20 uppercase tracking-widest text-xs"
+              >
+                <PlusCircle className="w-5 h-5" />
+                {t("uploadFirstCar")}
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* Pending Requests Section */}
         <div className="relative">
           <PendingRequests bookings={bookings} />
         </div>
@@ -97,6 +121,7 @@ export default async function DashboardPage({ params: { locale } }: { params: { 
         {/* History Section */}
         <OwnerBookings bookings={bookings} />
       </div>
+
     </div>
   );
 }

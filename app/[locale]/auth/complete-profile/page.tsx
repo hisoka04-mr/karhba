@@ -227,10 +227,10 @@ export default function CompleteProfilePage() {
                         className="w-full bg-secondary/50 border border-white/5 rounded-2xl py-4 px-4 text-sm focus:border-primary/50 focus:ring-0 transition-all outline-none appearance-none"
                       >
                         <option value="" disabled>{t("selectExperience")}</option>
-                        <option value="<1">{t("expLessThan1")}</option>
-                        <option value="1-3">{t("exp1To3")}</option>
-                        <option value="3-5">{t("exp3To5")}</option>
-                        <option value="5+">{t("expMoreThan5")}</option>
+                        <option value="<2">{t("expLessThan2")}</option>
+                        <option value="2-5">{t("exp2To5")}</option>
+                        <option value="5-10">{t("exp5To10")}</option>
+                        <option value="10+">{t("expMoreThan10")}</option>
                       </select>
                     </div>
                   </div>

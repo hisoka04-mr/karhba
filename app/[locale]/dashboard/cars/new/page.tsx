@@ -71,7 +71,8 @@ export default function UploadCarPage({ params: { locale } }: { params: { locale
         seats: parseInt(formData.get("seats") as string) || 5,
         description: formData.get("description"),
         photos: [photoUrl],
-        features: []
+        features: [],
+        is_hidden: false
       };
 
       const { error } = await supabase.from("cars").insert([carData]);

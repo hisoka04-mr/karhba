@@ -20,13 +20,20 @@ export async function login(formData: FormData, locale: string) {
   }
 
   if (signInData?.user) {
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("full_name, driving_experience, age")
       .eq("id", signInData.user.id)
       .single();
 
-    if (!profile?.full_name || !profile?.driving_experience || !profile?.age) {
+    // Only redirect to complete-profile if the query succeeded but data is missing.
+    // If the query failed (e.g. RLS error), skip the check and let the user through.
+    const meta = signInData.user.user_metadata;
+    const profileComplete = profile
+      ? (profile.full_name && profile.driving_experience && profile.age)
+      : (meta?.full_name && meta?.driving_experience && meta?.age);
+
+    if (!profileError && !profileComplete) {
       redirect(`/${locale}/auth/complete-profile`);
     }
   }

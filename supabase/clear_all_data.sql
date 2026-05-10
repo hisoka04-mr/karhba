@@ -1,25 +1,33 @@
 -- ============================================================
--- CLEAR ALL DATA (keeps tables, policies, and structure intact)
+-- CLEAR ALL DATA (removes all accounts, photos, and records)
 -- Run this in Supabase SQL Editor
 -- ============================================================
 
--- 1. Delete notifications first (depends on profiles)
+-- 1. Delete messages and chats
+DELETE FROM public.messages;
+DELETE FROM public.chats;
+
+-- 2. Delete notifications
 DELETE FROM public.notifications;
 
--- 2. Delete bookings (depends on cars & profiles)
+-- 3. Delete bookings
 DELETE FROM public.bookings;
 
--- 3. Delete cars (depends on profiles)
+-- 4. Delete cars (this removes car listings)
 DELETE FROM public.cars;
 
--- 4. Delete profiles (depends on auth.users)
+-- 5. Delete profiles
 DELETE FROM public.profiles;
 
--- 5. Delete all auth users (this removes accounts)
--- Must use the auth schema admin function
+-- 6. Delete all auth users (this removes the accounts)
 DELETE FROM auth.users;
 
--- 6. For storage photos: go to Supabase Dashboard → Storage → "cars" bucket
---    and delete the files manually (Supabase blocks direct SQL deletes on storage).
+-- 7. To delete storage files (photos):
+-- Supabase blocks direct SQL deletes on storage.objects for safety.
+-- Please go to Supabase Dashboard -> Storage and:
+-- 1. Open 'avatars' bucket -> Delete all files
+-- 2. Open 'cars' bucket -> Delete all files
 
--- Done! All data is cleared. Tables & policies remain.
+-- Done! All database records and accounts are cleared.
+
+

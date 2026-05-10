@@ -1,27 +1,35 @@
 -- ============================================================
--- KARHBA RESET: DELETE ALL ACCOUNTS & CAR DATA
+-- KARHBA RESET: DELETE ALL ACCOUNTS & DATA
 -- Run this in your Supabase SQL Editor
 -- ============================================================
 
--- 1. Delete notifications
+-- 1. Delete messages and chats
+DELETE FROM public.messages;
+DELETE FROM public.chats;
+
+-- 2. Delete notifications
 DELETE FROM public.notifications;
 
--- 2. Delete bookings
+-- 3. Delete bookings
 DELETE FROM public.bookings;
 
--- 3. Delete car listings
+-- 4. Delete car listings
 DELETE FROM public.cars;
 
--- 4. Delete user profiles
+-- 5. Delete user profiles
 DELETE FROM public.profiles;
 
--- 5. Delete authentication accounts
--- NOTE: This removes everyone from the Auth system.
+-- 6. Delete authentication accounts
 DELETE FROM auth.users;
 
+-- 7. To delete storage files (photos):
+-- Supabase blocks direct SQL deletes on storage.objects for safety.
+-- Please go to Supabase Dashboard -> Storage and:
+-- 1. Open 'avatars' bucket -> Delete all files
+-- 2. Open 'cars' bucket -> Delete all files
+
 -- ============================================================
--- TO DELETE STORAGE FILES:
--- 1. Go to Supabase Dashboard -> Storage
--- 2. Open the 'cars' bucket
--- 3. Select all files and click 'Delete'
+-- NOTE: This removes everyone and everything from the database.
 -- ============================================================
+
+
